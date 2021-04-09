@@ -4,15 +4,27 @@ const multer  = require('multer')
 const app = express()
 const port = 3001
 
-var upload = multer({ dest: './uploads/' })
+const storage = multer.diskStorage({
+  destination: function(req, file, callback) {
+    callback(null, 'uploads/');
+  },
+  filename: function (req, file, callback) {
+    const ext = file.mimetype.split('/')[1];
+    const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').replaceAll(':', '.')
+    callback(null, `${date}.${ext}`);
+  }
+});
+
+const upload = multer({storage: storage})
+
+app.use(express.static('uploads'))
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
 app.post('/upload', upload.single('file'), function (req, res) {
-    const fileId = req.file.filename
-    res.send(fileId)
+    res.send(req.file.filename)
  });
 
 app.listen(port, () => {
