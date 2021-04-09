@@ -1,5 +1,6 @@
 const express = require('express')
 const multer  = require('multer')
+const dayjs = require('dayjs')
 
 const app = express()
 const port = 3001
@@ -10,7 +11,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req, file, callback) {
     const ext = file.mimetype.split('/')[1];
-    const date = new Date().toISOString().replace(/T/, ' ').replace(/\..+/, '').replaceAll(':', '.')
+    const date = dayjs(new Date).format('YYYY-MM-DD HH-mm-ss') 
     callback(null, `${date}.${ext}`);
   }
 });
